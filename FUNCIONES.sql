@@ -1,15 +1,14 @@
-USE hotel;
-DELIMITER //
+USE `hotel`;
+DROP function IF EXISTS `CalcularCostoReserva`;
 
--- Función para calcular costo con descuento
-DROP FUNCTION IF EXISTS CalcularCostoReserva;
-CREATE FUNCTION CalcularCostoReserva(
-    p_precio_base DECIMAL(10,2),
+DELIMITER $$
+USE `hotel`$$
+CREATE FUNCTION `CalcularCostoReserva` (
+	p_precio_base DECIMAL(10,2),
     p_dias INT,
     p_fecha_reserva DATETIME,
     p_fecha_entrada DATE
 ) RETURNS DECIMAL(10,2)
-DETERMINISTIC
 BEGIN
     DECLARE costo_total DECIMAL(10,2);
     DECLARE descuento DECIMAL(10,2) DEFAULT 0;
@@ -22,16 +21,20 @@ BEGIN
     SET costo_total = (p_precio_base * p_dias) * (1 - descuento);
     
     RETURN costo_total;
-END //
+END$$
 
--- Función para verificar disponibilidad de habitación
-DROP FUNCTION IF EXISTS VerificarDisponibilidad;
-CREATE FUNCTION VerificarDisponibilidad(
+DELIMITER ;
+
+USE `hotel`;
+DROP function IF EXISTS `VerificarDisponibilidad`;
+
+DELIMITER $$
+USE `hotel`$$
+CREATE FUNCTION `VerificarDisponibilidad` (
     p_id_habitacion INT,
     p_fecha_entrada DATE,
     p_fecha_salida DATE
 ) RETURNS BOOLEAN
-DETERMINISTIC
 BEGIN
     DECLARE disponible BOOLEAN DEFAULT TRUE;
     
@@ -60,6 +63,6 @@ BEGIN
     END IF;
     
     RETURN disponible;
-END //
+END$$
 
 DELIMITER ;

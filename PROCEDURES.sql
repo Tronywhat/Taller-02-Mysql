@@ -1,9 +1,9 @@
-USE hotel;
-DELIMITER //
+USE `hotel`;
+DROP procedure IF EXISTS `CrearReserva`;
 
--- Procedimiento para crear reserva
-DROP PROCEDURE IF EXISTS CrearReserva;
-CREATE PROCEDURE CrearReserva(
+DELIMITER $$
+USE `hotel`$$
+CREATE PROCEDURE `CrearReserva` (
     IN p_id_cliente INT,
     IN p_id_habitacion INT,
     IN p_fecha_entrada DATE,
@@ -39,10 +39,16 @@ BEGIN
         
         SET p_resultado = CONCAT('Reserva creada exitosamente. Costo total: $', costo);
     END IF;
-END //
+END$$
 
-DROP PROCEDURE IF EXISTS AsignarHabitacionAutomatica;
-CREATE PROCEDURE AsignarHabitacionAutomatica(
+DELIMITER ;
+
+USE `hotel`;
+DROP procedure IF EXISTS `AsignarHabitacionAutomatica`;
+
+DELIMITER $$
+USE `hotel`$$
+CREATE PROCEDURE `AsignarHabitacionAutomatica` (
     IN p_id_cliente INT,
     IN p_fecha_entrada DATE,
     IN p_fecha_salida DATE,
@@ -68,6 +74,6 @@ BEGIN
         CALL CrearReserva(p_id_cliente, habitacion_disponible, p_fecha_entrada, p_fecha_salida, p_resultado);
         SET p_id_habitacion = habitacion_disponible;
     END IF;
-END //
+END$$
 
 DELIMITER ;

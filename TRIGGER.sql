@@ -1,10 +1,8 @@
-USE hotel;
-DELIMITER //
+DROP TRIGGER IF EXISTS `hotel`.`reservas_AFTER_UPDATE`;
 
-DROP TRIGGER IF EXISTS after_reserva_update;
-CREATE TRIGGER after_reserva_update
-AFTER UPDATE ON Reservas
-FOR EACH ROW
+DELIMITER $$
+USE `hotel`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `hotel`.`reservas_AFTER_UPDATE` AFTER UPDATE ON `reservas` FOR EACH ROW
 BEGIN
     IF NEW.estado = 'Cancelada' AND OLD.estado != 'Cancelada' THEN
 
@@ -15,26 +13,26 @@ BEGIN
         VALUES (NEW.id_reserva, 'Reserva cancelada', 
                CONCAT('Habitación liberada: ', NEW.id_habitacion));
     END IF;
-END //
+END$$
+DELIMITER ;
 
-DROP TRIGGER IF EXISTS after_mantenimiento_insert;
-CREATE TRIGGER after_mantenimiento_insert
-AFTER INSERT ON MantenimientoHabitaciones
-FOR EACH ROW
+DROP TRIGGER IF EXISTS `hotel`.`mantenimientohabitaciones_AFTER_INSERT`;
+
+DELIMITER $$
+USE `hotel`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `hotel`.`mantenimientohabitaciones_AFTER_INSERT` AFTER INSERT ON `mantenimientohabitaciones` FOR EACH ROW
 BEGIN
     UPDATE Habitaciones SET estado = 'Mantenimiento' 
     WHERE id_habitacion = NEW.id_habitacion;
-END //
+END$$
+DELIMITER ;
 
+DROP TRIGGER IF EXISTS `hotel`.`mantenimientohabitaciones_AFTER_UPDATE`;
 
-DELIMITER //
-
-DROP TRIGGER IF EXISTS after_mantenimiento_update;
-CREATE TRIGGER after_mantenimiento_update
-AFTER UPDATE ON MantenimientoHabitaciones
-FOR EACH ROW
+DELIMITER $$
+USE `hotel`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `hotel`.`mantenimientohabitaciones_AFTER_UPDATE` AFTER UPDATE ON `mantenimientohabitaciones` FOR EACH ROW
 BEGIN
-
     IF NEW.estado = 'Completado' AND OLD.estado != 'Completado' THEN
 
         IF NOT EXISTS (
@@ -51,6 +49,5 @@ BEGIN
                    CONCAT('Habitación ', NEW.id_habitacion, ' puesta como disponible'));
         END IF;
     END IF;
-END//
-
+END$$
 DELIMITER ;
